@@ -117,8 +117,12 @@ PROJECT("OpenMS_CONTRIB")
 # quick manual for most commands: http://www.cmake.org/cmake/help/cmake2.6docs.html
 # useful predefined variables: http://www.paraview.org/Wiki/CMake_Useful_Variables
 
-cmake_minimum_required(VERSION 2.8.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+# Set C++ version
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## sanity checks:
 
