@@ -94,8 +94,9 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK")
-set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT")
+set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT")
+
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
   message(STATUS "===========================================================================")
@@ -153,7 +154,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.8)
-set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_61_0)
+set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_64_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/xerces-c-3.1.1)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(SEQAN_DIR ${CONTRIB_BIN_SOURCE_DIR}/seqan-1.4.1)
@@ -161,7 +162,9 @@ set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-491bc9c5a46b)
 set(WILDMAGIC_DIR ${CONTRIB_BIN_SOURCE_DIR}/WildMagic5)
+set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
+
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
@@ -189,17 +192,17 @@ set(ARCHIVE_ZLIB zlib-1.2.8.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.2.8.tar)
 set(ARCHIVE_ZLIB_SHA1 "a4d316c404ff54ca545ea71a27af7dbc29817088")
 
-# set(ARCHIVE_BOOST boost_1_52_0.tar.gz)
-# set(ARCHIVE_BOOST_TAR  boost_1_52_0.tar)
-# set(ARCHIVE_BOOST_SHA1 "7cddbfd33fc99ed69343cd5cf8461648f8eae75a")
+# set(ARCHIVE_BOOST boost_1_61_0.tar.gz)
+# set(ARCHIVE_BOOST_TAR  boost_1_61_0.tar)
+# set(ARCHIVE_BOOST_SHA1 "2d2b80771f584f327827193fcf3abf836edcdfaa")
 
-set(ARCHIVE_BOOST boost_1_61_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_61_0.tar)
-set(ARCHIVE_BOOST_SHA1 "2d2b80771f584f327827193fcf3abf836edcdfaa")
+set(ARCHIVE_BOOST boost_1_64_0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost_1_64_0.tar)
+set(ARCHIVE_BOOST_SHA1 "6d983895e738e35b73c3a40b605080c4b64114e9")
 
-set(ARCHIVE_XERCES xerces-c-3.1.1-vs15.tar.gz)
+set(ARCHIVE_XERCES xerces-c-3.1.1-vs17.tar.gz)
 set(ARCHIVE_XERCES_TAR  xerces-c-3.1.1.tar)
-set(ARCHIVE_XERCES_SHA1 "9ec2c6993a9c72b73b2819b2ad33856ad39089d9")
+set(ARCHIVE_XERCES_SHA1 "af2bd237b8272f92dc6486f703b921a864f3006e")
  
 set(ARCHIVE_LIBSVM libsvm-3.12.tar.gz)
 set(ARCHIVE_LIBSVM_TAR  libsvm-3.12.tar)
@@ -217,13 +220,17 @@ set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 #set(ARCHIVE_COINOR_TAR  CoinMP-1.3.3.tar)
 #set(ARCHIVE_COINOR_SHA1 "28d29dae6abf6cdef027dcfa4961bb10b7f540cb")
 
-set(ARCHIVE_COINOR CoinMP-1.8.3.tar.gz)
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs17.tar.gz)
 set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3.tar)
-set(ARCHIVE_COINOR_SHA1 "e8b0e4e2fe8a0e3fa29744b9dfd7b1c5c0954451")
+set(ARCHIVE_COINOR_SHA1 "3a6374a9dc4bb22e1ca4266dc16776c37eeef43c")
 
 set(ARCHIVE_EIGEN eigen-3.2.10.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.2.10.tar)
 set(ARCHIVE_EIGEN_SHA1 "bb1d964f1fb11d6ae173010f33b971f93a631144")
+
+set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
+set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
+set(ARCHIVE_KISSFFT_SHA1 "14ee3bd4a6480dc7fbec9a6d3a16d5d9fbbfc0fb")
 
 set(ARCHIVE_WILDMAGIC WildMagic5.tar.gz)
 set(ARCHIVE_WILDMAGIC_TAR  WildMagic5.tar)
@@ -241,6 +248,7 @@ set(INCLUDE_DIR_GLPK ${CONTRIB_BIN_INCLUDE_DIR}/GLPK)
 set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
 set(INCLUDE_DIR_WILDMAGIC ${CONTRIB_BIN_INCLUDE_DIR}/WildMagic5)
+set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 
 ## hack for simple libs that do not have include directories
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
@@ -277,8 +285,14 @@ if (MSVC)
     set(TMP_MSVC_VERSION "12")
   elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 14.*")
     set(TMP_MSVC_VERSION "14")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 15.*")
+    set(TMP_MSVC_VERSION "15")
   else()
-    message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={8 2005, 9 2008, 10, 11, 12, 14}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries).")
+    if (OVERRIDE_GENERATOR)
+      message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
+    else()
+      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={8 2005, 9 2008, 10, 11, 12, 14, 15}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+    endif()
   endif()
   set(CONTRIB_MSVC_VERSION ${TMP_MSVC_VERSION} CACHE INTERNAL "Microsoft Visual Studio Version used. Valid values: 8 and above")
   ## parameter validity check
@@ -386,6 +400,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/zlib.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/coinor.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/wildmagic.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 
 ## build mac os x specific C/C++ flags
@@ -533,6 +548,16 @@ if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "WILDMAGIC")
   OPENMS_CLEAN_LIB("WILDMAGIC")
   OPENMS_CONTRIB_BUILD_WILDMAGIC()
   OPENMS_COPY_LIBS("WILDMAGIC")
+endif()
+
+##################################################
+###       KISSFFT                              ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "KISSFFT")
+  OPENMS_CLEAN_LIB("KISSFFT")
+  OPENMS_CONTRIB_BUILD_KISSFFT()
+  OPENMS_COPY_LIBS("KISSFFT")
 endif()
 
 ##################################################
