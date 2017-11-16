@@ -1,5 +1,5 @@
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
+--- CMakeLists.txt
++++ CMakeLists.txt
 @@ -416,16 +416,15 @@ add_subdirectory(Eigen)
  
  add_subdirectory(doc EXCLUDE_FROM_ALL)

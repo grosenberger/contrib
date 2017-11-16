@@ -1,5 +1,5 @@
---- a/unsupported/CMakeLists.txt
-+++ b/unsupported/CMakeLists.txt
+--- unsupported/CMakeLists.txt
++++ unsupported/CMakeLists.txt
 @@ -1,7 +1,9 @@
  add_subdirectory(Eigen)
  add_subdirectory(doc EXCLUDE_FROM_ALL)

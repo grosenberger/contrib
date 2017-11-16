@@ -1,5 +1,5 @@
---- a/blas/CMakeLists.txt
-+++ b/blas/CMakeLists.txt
+--- blas/CMakeLists.txt
++++ blas/CMakeLists.txt
 @@ -45,10 +45,12 @@ install(TARGETS eigen_blas eigen_blas_static
  
  if(EIGEN_Fortran_COMPILER_WORKS)
