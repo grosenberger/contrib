@@ -24,6 +24,7 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   execute_process(COMMAND ${CMAKE_COMMAND}
                   -G "${CMAKE_GENERATOR}"
                   -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                  -D BUILD_TESTING:BOOL=OFF
                   ${EIGEN_DIR}
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_CMAKE_OUT
