@@ -5,7 +5,7 @@
  add_subdirectory(doc EXCLUDE_FROM_ALL)
  
 -include(EigenConfigureTesting)
-+option(BUILD_TESTING "Enable creation of Eigen tests." ON)
++option(BUILD_TESTING "Enable creation of Eigen tests." OFF)
 +if(BUILD_TESTING)
 +  include(EigenConfigureTesting)
  
