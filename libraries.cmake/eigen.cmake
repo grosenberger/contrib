@@ -1,12 +1,12 @@
 ##################################################
-###       Eigen3                                ###
+###                  Eigen3                    ###
 ##################################################
 
 ## build and install eigen
 macro( OPENMS_CONTRIB_BUILD_EIGEN )
 
   OPENMS_LOGHEADER_LIBRARY("eigen")
-
+  
   if(MSVC)
     set(ZIP_ARGS "x -y -osrc")
   else()
@@ -32,10 +32,12 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_EIGEN_NATIVE_BUILD_DIR})
 
   message(STATUS "Generating eigen build system .. ")
+
   execute_process(COMMAND ${CMAKE_COMMAND}
                   -G "${CMAKE_GENERATOR}"
                   -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                   -D BUILD_TESTING:BOOL=OFF
+                  -D EIGEN_TEST_NOQT=ON
                   ${EIGEN_DIR}
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_CMAKE_OUT
@@ -56,7 +58,7 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   if(MSVC)
       set(_EIGEN_INSTALL_TARGET "INSTALL")
   else()
-      set(_EIGEN_INSTALL_TARGET "install")
+    message(STATUS "Generating eigen build system .. done")
   endif()
 
   message(STATUS "Installing eigen headers .. ")
@@ -76,4 +78,3 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
     message(STATUS "Installing eigen headers .. done")
   endif()
 endmacro( OPENMS_CONTRIB_BUILD_EIGEN )
-
