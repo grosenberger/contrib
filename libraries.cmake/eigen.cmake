@@ -6,6 +6,7 @@
 macro( OPENMS_CONTRIB_BUILD_EIGEN )
 
   OPENMS_LOGHEADER_LIBRARY("eigen")
+  
   if(MSVC)
     set(ZIP_ARGS "x -y -osrc")
   else()
@@ -13,12 +14,16 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_EIGEN "EIGEN" "CMakeLists.txt")
 
-  if(MSVC)
-    # fixes MSVC 2012 compiler detection
-    set(_PATCH_FILE "${PATCH_DIR}/eigen/EigenDetermineVSServicePack.cmake.patch")
-    set(_PATCHED_FILE "${EIGEN_DIR}/cmake/EigenDetermineVSServicePack.cmake")
-    OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)
-  endif()
+  # disable testing using blas libraries
+  set(_PATCH_FILE "${PATCH_DIR}/eigen/CMakeList.txt.patch")		
+  set(_PATCHED_FILE "${EIGEN_DIR}/CMakeList.txt")		
+  OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)		
+  set(_PATCH_FILE "${PATCH_DIR}/eigen/blasCMakeList.txt.patch")		
+  set(_PATCHED_FILE "${EIGEN_DIR}/blas/CMakeList.txt")		
+  OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)		
+  set(_PATCH_FILE "${PATCH_DIR}/eigen/unsupportedCMakeList.txt.patch")		
+  set(_PATCHED_FILE "${EIGEN_DIR}/unsupported/CMakeList.txt")		
+  OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)		
 
   # eigen doesn't allow insource builds
   set(_EIGEN_BUILD_DIR "${EIGEN_DIR}/build")
@@ -27,7 +32,13 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_EIGEN_NATIVE_BUILD_DIR})
 
   message(STATUS "Generating eigen build system .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" -D EIGEN_TEST_NOQT=ON -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR} ${EIGEN_DIR}
+
+  execute_process(COMMAND ${CMAKE_COMMAND}
+                  -G "${CMAKE_GENERATOR}"
+                  -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                  -D BUILD_TESTING:BOOL=OFF
+                  -D EIGEN_TEST_NOQT=ON
+                  ${EIGEN_DIR}
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_CMAKE_OUT
                   ERROR_VARIABLE _EIGEN_CMAKE_ERR
@@ -43,20 +54,27 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
     message(STATUS "Generating eigen build system .. done")
   endif()
 
+  # the install target on windows has a different name then on mac/lnx
+  if(MSVC)
+      set(_EIGEN_INSTALL_TARGET "INSTALL")
+  else()
+    message(STATUS "Generating eigen build system .. done")
+  endif()
+
   message(STATUS "Installing eigen headers .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} -DBUILD_TYPE=Release -P cmake_install.cmake
+  execute_process(COMMAND ${CMAKE_COMMAND} --build ${_EIGEN_NATIVE_BUILD_DIR} --target ${_EIGEN_INSTALL_TARGET} --config Release
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_BUILD_OUT
                   ERROR_VARIABLE _EIGEN_BUILD_ERR
                   RESULT_VARIABLE _EIGEN_BUILD_SUCCESS)
 
-	# output to logfile
-	file(APPEND ${LOGFILE} ${_EIGEN_BUILD_OUT})
-	file(APPEND ${LOGFILE} ${_EIGEN_BUILD_ERR})
+  # output to logfile
+  file(APPEND ${LOGFILE} ${_EIGEN_BUILD_OUT})
+  file(APPEND ${LOGFILE} ${_EIGEN_BUILD_ERR})
 
-	if (NOT _EIGEN_BUILD_SUCCESS EQUAL 0)
-		message(FATAL_ERROR "Installing eigen headers .. failed")
-	else()
-		message(STATUS "Installing eigen headers .. done")
-	endif()
+  if (NOT _EIGEN_BUILD_SUCCESS EQUAL 0)
+    message(FATAL_ERROR "Installing eigen headers .. failed")
+  else()
+    message(STATUS "Installing eigen headers .. done")
+  endif()
 endmacro( OPENMS_CONTRIB_BUILD_EIGEN )
