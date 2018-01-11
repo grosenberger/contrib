@@ -58,7 +58,7 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   if(MSVC)
       set(_EIGEN_INSTALL_TARGET "INSTALL")
   else()
-    message(STATUS "Generating eigen build system .. done")
+      set(_EIGEN_INSTALL_TARGET "install")
   endif()
 
   message(STATUS "Installing eigen headers .. ")
