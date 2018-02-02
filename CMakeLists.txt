@@ -487,7 +487,6 @@ endif()
 if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "XERCESC")
   OPENMS_CLEAN_LIB("XERCES")
   OPENMS_CONTRIB_BUILD_XERCESC()
-  OPENMS_COPY_LIBS("XERCES")
 endif()
 
 ##################################################
