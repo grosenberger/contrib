@@ -14,13 +14,31 @@ MACRO( OPENMS_CONTRIB_BUILD_SQLITE )
   
   if(MSVC)
     message( STATUS "Building SQLITE library in  ${SQLITE_DIR}")
-	# there is a Makefile.am, but it uses (broken) .def export instead of just a simple call to cl. So we just use:
-    execute_process(COMMAND "cl" "sqlite3.c" "-DSQLITE_API=__declspec(dllexport)" "-link" "-dll" "-out:sqlite3.dll"
-                    WORKING_DIRECTORY "${SQLITE_DIR}"
-                    RESULT_VARIABLE _SQLITE_RES
-                    OUTPUT_VARIABLE _SQLITE_OUT
-                    ERROR_VARIABLE _SQLITE_ERR
-                    )
+	
+	if (${BUILD_SHARED_LIBRARIES})
+		# there is a Makefile.am, but it uses (broken) .def export instead of just a simple call to cl. So we just use:
+		execute_process(COMMAND "cl" "sqlite3.c" "-DSQLITE_API=__declspec(dllexport)" "-link" "-dll" "-out:sqlite3.dll"
+		               WORKING_DIRECTORY "${SQLITE_DIR}"
+		               RESULT_VARIABLE _SQLITE_RES
+		               OUTPUT_VARIABLE _SQLITE_OUT
+		               ERROR_VARIABLE _SQLITE_ERR
+		               )
+					   
+	else()
+		execute_process(COMMAND "cl" "/c" "sqlite3.c"
+						WORKING_DIRECTORY "${SQLITE_DIR}"
+						RESULT_VARIABLE _SQLITE_RES
+						OUTPUT_VARIABLE _SQLITE_OUT
+						ERROR_VARIABLE _SQLITE_ERR
+						)
+		execute_process(COMMAND "lib" "sqlite3.obj"
+						WORKING_DIRECTORY "${SQLITE_DIR}"
+						RESULT_VARIABLE _SQLITE_RES
+						OUTPUT_VARIABLE _SQLITE_OUT
+						ERROR_VARIABLE _SQLITE_ERR
+						)
+	endif()
+	
     if (NOT _SQLITE_RES EQUAL 0)
       message( STATUS "Building sqlite failed")
       file(APPEND ${LOGFILE} "sqlite failed" )
@@ -34,8 +52,11 @@ MACRO( OPENMS_CONTRIB_BUILD_SQLITE )
     file(APPEND ${LOGFILE} ${_SQLITE_OUT})
     
     configure_file(${SQLITE_DIR}/sqlite3.h ${PROJECT_BINARY_DIR}/include/sqlite/sqlite3.h COPYONLY)
-    configure_file(${SQLITE_DIR}/sqlite3.dll ${PROJECT_BINARY_DIR}/lib/sqlite.dll COPYONLY)
+	if(${BUILD_SHARED_LIBRARIES})
+		configure_file(${SQLITE_DIR}/sqlite3.dll ${PROJECT_BINARY_DIR}/lib/sqlite.dll COPYONLY)
+	endif()
     configure_file(${SQLITE_DIR}/sqlite3.lib ${PROJECT_BINARY_DIR}/lib/sqlite.lib COPYONLY)
+	
   else()
     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
      set (SQLITE_CUSTOM_FLAGS "${CXX_OSX_FLAGS}")
