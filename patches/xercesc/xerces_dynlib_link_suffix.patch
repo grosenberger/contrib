@@ -1,5 +1,5 @@
---- CMakeLists.txt	2018-02-05 13:13:47.000000000 +0100
-+++ CMakeLists_new.txt	2018-02-05 13:06:05.000000000 +0100
+--- src/CMakeLists.txt	2018-02-05 13:13:47.000000000 +0100
++++ src/CMakeLists.txt	2018-02-05 13:06:05.000000000 +0100
 @@ -1271,10 +1271,12 @@
    # time.  Note: could be dropped when the SONAME is updated and
    # libtool compatibility is no longer required.
