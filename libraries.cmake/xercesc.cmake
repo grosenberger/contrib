@@ -57,7 +57,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 		file(APPEND ${LOGFILE} ${XERCES_Release_OUT})
 	else()
 		## Linux and Mac
-                set(_PATCH_FILE "${PATCH_DIR}/xerces/xerces_dynlib_link_suffix.patch")
+                set(_PATCH_FILE "${PATCH_DIR}/xercesc/xerces_dynlib_link_suffix.patch")
 		set(_PATCHED_FILE "${XERCES_DIR}/src/CMakeLists.txt")
 		OPENMS_PATCH( _PATCH_FILE XERCES_DIR _PATCHED_FILE)
 	        
