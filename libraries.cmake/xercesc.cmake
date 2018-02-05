@@ -16,7 +16,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 	## Regarding transcoder choices. Let Xerces figure it out.
 
 	if (WIN32)
-		#set(XERCES_EXTRA_CMAKE_FLAGS "-D")
+		#set(XERCES_EXTRA_CMAKE_FLAGS "-D...")
 		message( STATUS "Generating XERCES-C cmake build system for Debug and Release...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
 								-D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -57,44 +57,24 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 		file(APPEND ${LOGFILE} ${XERCES_Release_OUT})
 	else()
 		## Linux and Mac
-		
-		#set(XERCES_EXTRA_CMAKE_FLAGS "-D")
-		message( STATUS "Generating XERCES-C cmake build system for Debug...")
-		execute_process(COMMAND ${CMAKE_COMMAND}
-								-D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-								-D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
-								-G "${CMAKE_GENERATOR}"
-								-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-								-D CMAKE_BUILD_TYPE=Debug
-								#${XERCES_EXTRA_CMAKE_FLAGS}
-								.
-						WORKING_DIRECTORY ${XERCES_DIR}
-						OUTPUT_VARIABLE XERCES_CMAKE_Debug_OUT
-						ERROR_VARIABLE XERCES_CMAKE_Debug_ERR
-						RESULT_VARIABLE XERCES_CMAKE_Debug_SUCCESS)
-						
-		file(APPEND ${LOGFILE} ${XERCES_CMAKE_Debug_OUT})
-						
-		message( STATUS "Building and installing XERCES-C for Debug...")				
-		execute_process(COMMAND ${CMAKE_COMMAND}
-								--build .
-								--target install
-						WORKING_DIRECTORY ${XERCES_DIR}
-						OUTPUT_VARIABLE XERCES_Debug_OUT
-						ERROR_VARIABLE XERCES_Debug_ERR
-						RESULT_VARIABLE XERCES_Debug_SUCCESS)				
-
-		file(APPEND ${LOGFILE} ${XERCES_Debug_OUT})
+                set(_PATCH_FILE "${PATCH_DIR}/xerces/xerces_dynlib_link_suffix.patch")
+		set(_PATCHED_FILE "${XERCES_DIR}/src/CMakeLists.txt")
+		OPENMS_PATCH( _PATCH_FILE XERCES_DIR _PATCHED_FILE)
+	        
+		if(APPLE)
+	            set(XERCES_EXTRA_CMAKE_FLAGS "-DCMAKE_SHARED_LIBARY_SUFFIX=dylib")
+                endif()
 		
 		## Release
 		message( STATUS "Reconfiguring XERCES-C cmake build system for Release...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
+                                                                -D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                                                                -D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
 								-G "${CMAKE_GENERATOR}"
 								-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 								-D CMAKE_BUILD_TYPE=Release
-								#${XERCES_EXTRA_CMAKE_FLAGS}
+								${XERCES_EXTRA_CMAKE_FLAGS}
 								.
 						WORKING_DIRECTORY ${XERCES_DIR}
 						OUTPUT_VARIABLE XERCES_CMAKE_Release_OUT
