@@ -62,8 +62,11 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 		set(_PATCHED_FILE "${XERCES_DIR}/src/CMakeLists.txt")
 		OPENMS_PATCH( _PATCH_FILE XERCES_DIR _PATCHED_FILE)
 	        
+		set(_transcoder "gnuiconv") # to use on linux to reduce external libs (even if ICU is found)
+		
 		if(APPLE)
 	            set(XERCES_EXTRA_CMAKE_FLAGS "-DCMAKE_SHARED_LIBARY_SUFFIX=dylib")
+		    set(_transcoder "macosunicodeconverter") # standard on macOS
                 endif()
 		
 		## Release
@@ -74,10 +77,12 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
 								-G "${CMAKE_GENERATOR}"
 								-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+								-D CMAKE_INSTALL_LIBDIR=lib
 								-D CMAKE_BUILD_TYPE=Release
 								-D CMAKE_POSITION_INDEPENDENT_CODE=ON
 								-D CMAKE_CXX_FLAGS="-fPIC"
 								-Dnetwork:BOOL=OFF
+								-Dtranscoder=${_transcoder}
 								${XERCES_EXTRA_CMAKE_FLAGS}
 								.
 						WORKING_DIRECTORY ${XERCES_DIR}
