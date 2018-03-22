@@ -76,6 +76,13 @@ MACRO( OPENMS_CONTRIB_BUILD_SQLITE )
     endif()
         
     message( STATUS "Configure SQLITE library (./configure --prefix ${CMAKE_BINARY_DIR} --with-pic --disable-shared) .. ")
+    exec_program("sed" "${SQLITE_DIR}"
+        ARGS
+        -i "\"s/PACKAGE_STRING='sqlite 3.15.0'/PACKAGE_STRING='sqlite3.15.0'/\"" configure
+        OUTPUT_VARIABLE SQLITE_SED_OUT
+        RETURN_VALUE SQLITE_SED_SUCCESS
+    )
+
     exec_program("./configure" "${SQLITE_DIR}"
       ARGS
       --prefix ${CMAKE_BINARY_DIR}
