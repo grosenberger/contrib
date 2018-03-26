@@ -19,8 +19,6 @@ only downloaded when built.
 You can find prebuilt versions and the used sources
 (e.g. for manual download) on our [archive](https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib).
 
-Building with Visual Studio 2017 is not supported, yet.
-
 Build
 ============
 
