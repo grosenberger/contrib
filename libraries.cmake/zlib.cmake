@@ -13,18 +13,11 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ZLIB "ZLIB" "README")
 	
   ## build the obj/lib
-  if (MSVC)
-    # fixing static build problem
-    #if(NOT BUILD_SHARED_LIBRARIES)			
-    #    set(PATCH_FILE "${PATCH_DIR}/zlib/zlib_cmakelists.diff")
-    #    set(PATCHED_FILE "${ZLIB_DIR}/CMakeLists.txt")
-    #    OPENMS_PATCH( PATCH_FILE ZLIB_DIR PATCHED_FILE)
-    #endif()
-		
+  if (MSVC)		
     message(STATUS "Generating zlib build system .. ")
     execute_process(COMMAND ${CMAKE_COMMAND}
                             -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
-                            -D INSTALL_BIN_DIR=lib
+                            -D INSTALL_BIN_DIR=${PROJECT_BINARY_DIR}/lib
                             -G "${CMAKE_GENERATOR}"
                             -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                             ${ZLIB_EXTRA_CMAKE_FLAG}
@@ -81,14 +74,14 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
 	else() ## Linux/MacOS  
 
     # CFLAGS for libsvm compiler (see libsvm Makefile)
-    set(ZLIB_CFLAGS "-Wall -O3 -fPIC")
+    set(ZLIB_CFLAGS "-Wall" "-O3" "-fPIC")
 
     message(STATUS "Generating zlib build system .. ")
     execute_process(COMMAND ${CMAKE_COMMAND}
                             -G "${CMAKE_GENERATOR}"
                             -D CMAKE_BUILD_TYPE=Release
                             -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                            -D CMAKE_C_FLAGS="${ZLIB_CFLAGS}"
+                            -D CMAKE_C_FLAGS=${ZLIB_CFLAGS}
                             .
                     WORKING_DIRECTORY ${ZLIB_DIR}
                     OUTPUT_VARIABLE ZLIB_CMAKE_OUT
