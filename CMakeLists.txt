@@ -155,7 +155,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 # project specific source directories
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
-set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.8)
+set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.11)
 set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_64_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
@@ -190,9 +190,13 @@ set(ARCHIVE_BZIP2_SHA1 "8b02713ea0c8eb501cc8bdac4432d7f29700f767")
 # set(ARCHIVE_ZLIB_TAR  zlib-1.2.5.tar)
 # set(ARCHIVE_ZLIB_SHA1 "8e8b93fa5eb80df1afe5422309dca42964562d7e")
 
-set(ARCHIVE_ZLIB zlib-1.2.8.tar.gz)
-set(ARCHIVE_ZLIB_TAR  zlib-1.2.8.tar)
-set(ARCHIVE_ZLIB_SHA1 "a4d316c404ff54ca545ea71a27af7dbc29817088")
+#set(ARCHIVE_ZLIB zlib-1.2.8.tar.gz)
+#set(ARCHIVE_ZLIB_TAR  zlib-1.2.8.tar)
+#set(ARCHIVE_ZLIB_SHA1 "a4d316c404ff54ca545ea71a27af7dbc29817088")
+
+set(ARCHIVE_ZLIB zlib-1.2.11.tar.gz)
+set(ARCHIVE_ZLIB_TAR  zlib-1.2.11.tar)
+set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
 
 # set(ARCHIVE_BOOST boost_1_61_0.tar.gz)
 # set(ARCHIVE_BOOST_TAR  boost_1_61_0.tar)

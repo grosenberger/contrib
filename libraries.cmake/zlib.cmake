@@ -13,17 +13,11 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ZLIB "ZLIB" "README")
 	
   ## build the obj/lib
-  if (MSVC)
-    # fixing static build problem
-    if(NOT BUILD_SHARED_LIBRARIES)			
-        set(PATCH_FILE "${PATCH_DIR}/zlib/zlib_cmakelists.diff")
-        set(PATCHED_FILE "${ZLIB_DIR}/CMakeLists.txt")
-        OPENMS_PATCH( PATCH_FILE ZLIB_DIR PATCHED_FILE)
-    endif()
-		
+  if (MSVC)		
     message(STATUS "Generating zlib build system .. ")
     execute_process(COMMAND ${CMAKE_COMMAND}
                             -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
+                            -D INSTALL_BIN_DIR=${PROJECT_BINARY_DIR}/lib
                             -G "${CMAKE_GENERATOR}"
                             -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                             ${ZLIB_EXTRA_CMAKE_FLAG}
@@ -80,76 +74,36 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
 	else() ## Linux/MacOS  
 
     # CFLAGS for libsvm compiler (see libsvm Makefile)
-    set(ZLIB_CFLAGS "-Wall -O3 -fPIC")
+    set(ZLIB_CFLAGS "-Wall" "-O3" "-fPIC")
 
-    # add OS X specific flags
-    if( APPLE )
-      set(ZLIB_CFLAGS "${ZLIB_CFLAGS} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}")
-      set(OLD_CFLAGS $ENV{CFLAGS})
-      set(ENV{CFLAGS} "-O3 ${OSX_SYSROOT_FLAG}")
-    endif( APPLE )
+    message(STATUS "Generating zlib build system .. ")
+    execute_process(COMMAND ${CMAKE_COMMAND}
+                            -G "${CMAKE_GENERATOR}"
+                            -D CMAKE_BUILD_TYPE=Release
+                            -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                            -D CMAKE_C_FLAGS=${ZLIB_CFLAGS}
+                            .
+                    WORKING_DIRECTORY ${ZLIB_DIR}
+                    OUTPUT_VARIABLE ZLIB_CMAKE_OUT
+                    ERROR_VARIABLE ZLIB_CMAKE_ERR
+                    RESULT_VARIABLE ZLIB_CMAKE_SUCCESS)
 
-	# configure with with prefix
-    message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR}) .. ")
-    exec_program("./configure" ${ZLIB_DIR}
-      ARGS
-      --prefix=${CMAKE_BINARY_DIR}
-      OUTPUT_VARIABLE ZLIB_CONFIGURE_OUT
-      RETURN_VALUE ZLIB_CONFIGURE_SUCCESS
-      )  
+    # rebuild as release
+    message(STATUS "Building zlib lib (Release) .. ")
+    execute_process(COMMAND ${CMAKE_COMMAND} --build ${ZLIB_DIR} --target install
+                    WORKING_DIRECTORY ${ZLIB_DIR}
+                    OUTPUT_VARIABLE ZLIB_BUILD_OUT
+                    ERROR_VARIABLE ZLIB_BUILD_ERR
+                    RESULT_VARIABLE ZLIB_BUILD_SUCCESS)
+    # output to logfile
+    file(APPEND ${LOGFILE} ${ZLIB_BUILD_OUT})
+    file(APPEND ${LOGFILE} ${ZLIB_BUILD_ERR})
 
-	# logfile
-    file(APPEND ${LOGFILE} ${ZLIB_CONFIGURE_OUT})
-
-    if( NOT ZLIB_CONFIGURE_SUCCESS EQUAL 0)
-      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR}) .. failed")
-      message( FATAL_ERROR ${ZLIB_CONFIGURE_OUT})
+    if (NOT ZLIB_BUILD_SUCCESS EQUAL 0)
+      message(FATAL_ERROR "Building zlib lib (Release) .. failed")
     else()
-      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR}) .. done")
+      message(STATUS "Building zlib lib (Release) .. done")
     endif()
-		
-
-	# make
-    message(STATUS "Building zlib library (make CFLAGS='${ZLIB_CFLAGS}') .. ")
-    exec_program(${CMAKE_MAKE_PROGRAM} ${ZLIB_DIR}
-      ARGS # setting compiler and flags
-      clean all
-      # We let ./configure choose the compiler, lets not interfere
-      # CC=${CMAKE_C_COMPILER}
-      CFLAGS='${ZLIB_CFLAGS}'
-      OUTPUT_VARIABLE ZLIB_MAKE_OUT
-      RETURN_VALUE BUILD_SUCCESS)
-
-    # logfile
-    file(APPEND ${LOGFILE} ${ZLIB_MAKE_OUT})
-    if (NOT BUILD_SUCCESS EQUAL 0)
-        message(STATUS "Building zlib library (make CFLAGS='${ZLIB_CFLAGS}') .. failed")
-	    message(FATAL_ERROR ${ZLIB_MAKE_OUT})
-    else()
-      message(STATUS "Building zlib library (make CFLAGS='${ZLIB_CFLAGS}') .. done")
-	endif()
-    
-    # make install
-    message( STATUS "Installing zlib library (make install) .. ")
-    exec_program(${CMAKE_MAKE_PROGRAM} "${ZLIB_DIR}"
-                ARGS "install"
-    OUTPUT_VARIABLE ZLIB_INSTALL_OUT
-    RETURN_VALUE ZLIB_INSTALL_SUCCESS
-    )
-
-	# logfile
-    file(APPEND ${LOGFILE} ${ZLIB_INSTALL_OUT})
-
-    if( NOT ZLIB_INSTALL_SUCCESS EQUAL 0)
-      message( STATUS "Installing zlib library (make install) .. failed")
-      message( FATAL_ERROR ${ZLIB_INSTALL_OUT})
-    else()
-      message( STATUS "Installing zlib library (make install) .. done")
-    endif()
-    
-    if( APPLE )
-      set(ENV{CFLAGS} ${OLD_CFLAGS})
-    endif( APPLE )
 
 endif()
 
