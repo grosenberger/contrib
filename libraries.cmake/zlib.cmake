@@ -99,6 +99,10 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     file(APPEND ${LOGFILE} ${ZLIB_BUILD_OUT})
     file(APPEND ${LOGFILE} ${ZLIB_BUILD_ERR})
 
+    if(APPLE) ## Somehow libz does not add the path to the install_name. -> Problems while resolving dependecies during shipping
+    execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${PROJECT_BINARY_DIR}/lib/libz.1.dylib ${PROJECT_BINARY_DIR}/lib/libz.1.dylib)
+    endif()
+
     if (NOT ZLIB_BUILD_SUCCESS EQUAL 0)
       message(FATAL_ERROR "Building zlib lib (Release) .. failed")
     else()
