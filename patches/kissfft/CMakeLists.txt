@@ -10,7 +10,7 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
 endif()
 
 if(NOT WIN32)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3 -mtune=native -ffast-math -fomit-frame-pointer -Dkiss_fft_scalar=double -unroll-loops -dA -fverbose-asm")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3 -mtune=native -ffast-math -fomit-frame-pointer -Dkiss_fft_scalar=double -funroll-loops -dA -fverbose-asm")
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} "tools")
