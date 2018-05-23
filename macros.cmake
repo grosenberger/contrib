@@ -32,9 +32,11 @@
 # $Authors: Stephan Aiche, Chris Bielow $
 # --------------------------------------------------------------------------
 
+
+
 macro(determine_compiler_version )
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR  "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
+    execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
                     OUTPUT_VARIABLE CXX_COMPILER_VERSION)
     string(REGEX MATCHALL "[0-9]+" CXX_COMPILER_COMPONENTS ${CXX_COMPILER_VERSION})
     list(GET CXX_COMPILER_COMPONENTS 0 CXX_COMPILER_VERSION_MAJOR)
@@ -49,7 +51,7 @@ macro(determine_compiler_version )
 endmacro()
 
 ## validates the archive for the given library
-## @param libname The libary that should be validate
+## @param libname The libary that should be validated
 macro(validate_archive libname)
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
   set(_target_file "${_archive_folder}/${ARCHIVE_${libname}}")
@@ -77,7 +79,7 @@ endmacro()
 
 
 ## downloads the archive for the given library
-## @param libname The libary that should be downloaded
+## @param libname The library that should be downloaded
 macro(download_contrib_archive libname)
   # constant
   # Currently this points to an FTP at FU Berlin

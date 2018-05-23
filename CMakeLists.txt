@@ -115,7 +115,7 @@ endif()
 PROJECT("OpenMS_CONTRIB")
 
 # Heart of the BUILD system : only edit when you know what you are doing (we don't)
-# quick manual for most commands: http://www.cmake.org/cmake/help/cmake2.6docs.html
+# quick manual for most commands: https://cmake.org/cmake/help/v3.3/manual/cmake-commands.7.html
 # useful predefined variables: http://www.paraview.org/Wiki/CMake_Useful_Variables
 
 # force cmake > 3.1 to force enable c11 support
@@ -272,7 +272,7 @@ if (CMAKE_SIZEOF_VOID_P MATCHES "8")
 else()
   set(CONTRIB_ADDRESSMODEL 32 CACHE INTERNAL "Architecture-bits")
 endif()
-message(STATUS "ADDRESSMODEL IS: ${CONTRIB_ADDRESSMODEL} bit")
+message(STATUS "ADDRESSMODEL is: ${CONTRIB_ADDRESSMODEL}-bit")
 if (NOT CONTRIB_ADDRESSMODEL MATCHES "32|64")
   Message(FATAL_ERROR "CONTRIB_ADDRESSMODEL is neither 32 nor 64! Please correct this!")
 endif()
@@ -281,6 +281,25 @@ endif()
 set(LOGFILE "${PROJECT_BINARY_DIR}/contrib_build.log")
 
 if (MSVC)
+  
+  ## check that the console environment has a cl.exe architecture which is identical to the VS Generator
+  ## If cl.exe builds 32-bit libs and VS Generator is Win64, we'd end up with mixed 32bit/64bit libraries, depending on how each lib is build (Cmake, bjam, nmake)
+  execute_process(COMMAND "cl.exe" OUTPUT_VARIABLE cl_out ERROR_VARIABLE cl_out)
+  ##message(STATUS "Cl.exe said: ${cl_out}")
+  if (cl_out MATCHES ".*x64.*")
+    message(STATUS "Cl.exe produces: 64-bit")
+    set(CL_ADDRESSMODEL 64)
+  elseif (cl_out MATCHES ".*x86.*")
+    message(STATUS "Cl.exe produces: 32-bit")
+    set(CL_ADDRESSMODEL 32)
+  else()
+    message(FATAL_ERROR "Could not determine if cl.exe builds x86 or x64 apps. Make sure cl.exe is available in your environment!")
+  endif()
+  if (NOT (CL_ADDRESSMODEL EQUAL CONTRIB_ADDRESSMODEL))
+    message(FATAL_ERROR "cl.exe (${CL_ADDRESSMODEL}-bit) and Visual Studio Generator (${CONTRIB_ADDRESSMODEL}-bit) do not match. Please fix your PATH environment to find the proper cl.exe or use/omit the Win64 generator.")
+  endif()
+
+
   ## guess MSVC Version (we need this in order to correctly guess the names of the VS solution targets.
   ## Since CMake 3.0 you can use the years (e.g. 2013) for every VS version. For VS 8 and 9 you have to use the year!
   if (CMAKE_GENERATOR MATCHES ".*Visual Studio 8 2005.*")
