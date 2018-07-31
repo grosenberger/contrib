@@ -123,9 +123,25 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-# Set C++ version
+# Set C++ version (does only work if we had a target-based CMake script)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Until then, check again manually. MSVC is checked separately later
+if (UNIX)
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
+      message(FATAL_ERROR "clang++: OpenMS-contrib requires version 3.3 to build but found ${CMAKE_CXX_COMPILER_VERSION}")
+    endif()  
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5.0.0")
+      message(FATAL_ERROR "appleclang: OpenMS-contrib requires version 5.0.0 to build but found ${CMAKE_CXX_COMPILER_VERSION}")
+    endif()  
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.2")
+      message(FATAL_ERROR "g++: OpenMS-contrib requires version 4.7.2 to build but found ${CMAKE_CXX_COMPILER_VERSION}")
+    endif()  
+  endif()
+endif()
 
 ## sanity checks:
 
@@ -302,17 +318,7 @@ if (MSVC)
 
   ## guess MSVC Version (we need this in order to correctly guess the names of the VS solution targets.
   ## Since CMake 3.0 you can use the years (e.g. 2013) for every VS version. For VS 8 and 9 you have to use the year!
-  if (CMAKE_GENERATOR MATCHES ".*Visual Studio 8 2005.*")
-    set(TMP_MSVC_VERSION "8")
-  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 9 2008.*")
-    set(TMP_MSVC_VERSION "9")
-  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 10.*")
-    set(TMP_MSVC_VERSION "10")
-  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 11.*")
-    set(TMP_MSVC_VERSION "11")
-  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 12.*")
-    set(TMP_MSVC_VERSION "12")
-  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 14.*")
+  if (CMAKE_GENERATOR MATCHES ".*Visual Studio 14.*")
     set(TMP_MSVC_VERSION "14")
   elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 15.*")
     set(TMP_MSVC_VERSION "15")
@@ -320,10 +326,10 @@ if (MSVC)
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={8 2005, 9 2008, 10, 11, 12, 14, 15}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={14, 15}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
-  set(CONTRIB_MSVC_VERSION ${TMP_MSVC_VERSION} CACHE INTERNAL "Microsoft Visual Studio Version used. Valid values: 8 and above")
+  set(CONTRIB_MSVC_VERSION ${TMP_MSVC_VERSION} CACHE INTERNAL "Microsoft Visual Studio Version used. Valid values: 14 and above")
   ## parameter validity check
   message(STATUS "MSVC Version is: ${CONTRIB_MSVC_VERSION}")
 

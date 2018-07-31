@@ -2,7 +2,6 @@
 ###       XERCES 															 ###
 ##################################################
 ## XERCES from http://xerces.apache.org/xerces-c/
-## repacked source files and created VisualStudio 2008 files
 
 MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 	OPENMS_LOGHEADER_LIBRARY("Xerces-C")
@@ -33,7 +32,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 						RESULT_VARIABLE XERCES_CMAKE_SUCCESS)				
 						
 		# logfile
-		file(APPEND ${LOGFILE} ${XERCES_CMAKE_OUT})
+		file(APPEND ${LOGFILE} ${XERCES_CMAKE_OUT} ${XERCES_Release_ERR})
 		
 		execute_process(COMMAND ${CMAKE_COMMAND}
 						--build .
@@ -55,7 +54,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 				ERROR_VARIABLE XERCES_Release_ERR
 				RESULT_VARIABLE XERCES_Release_SUCCESS)
 		
-		file(APPEND ${LOGFILE} ${XERCES_Release_OUT})
+		file(APPEND ${LOGFILE} ${XERCES_Release_OUT} ${XERCES_Release_ERR})
 	else()
 		## Linux and Mac
                 set(_PATCH_FILE "${PATCH_DIR}/xercesc/xerces_dynlib_link_suffix.patch")
@@ -90,7 +89,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 						ERROR_VARIABLE XERCES_CMAKE_Release_ERR
 						RESULT_VARIABLE XERCES_CMAKE_Release_SUCCESS)
 						
-		file(APPEND ${LOGFILE} ${XERCES_CMAKE_Release_OUT})
+		file(APPEND ${LOGFILE} ${XERCES_CMAKE_Release_OUT} ${XERCES_Release_ERR})
 						
 		message( STATUS "Building and installing XERCES-C for Release...")				
 		execute_process(COMMAND ${CMAKE_COMMAND}
@@ -101,7 +100,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 						ERROR_VARIABLE XERCES_Release_ERR
 						RESULT_VARIABLE XERCES_Release_SUCCESS)				
 
-		file(APPEND ${LOGFILE} ${XERCES_Release_OUT})
+		file(APPEND ${LOGFILE} ${XERCES_Release_OUT} ${XERCES_Release_ERR})
 
 	endif()
 ENDMACRO( OPENMS_CONTRIB_BUILD_XERCESC )
