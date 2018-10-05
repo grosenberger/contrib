@@ -49,7 +49,7 @@ macro(determine_compiler_version )
 endmacro()
 
 ## validates the archive for the given library
-## @param libname The libary that should be validate
+## @param libname The library that should be validated
 macro(validate_archive libname)
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
   set(_target_file "${_archive_folder}/${ARCHIVE_${libname}}")
@@ -76,7 +76,7 @@ endmacro()
 
 
 ## downloads the archive for the given library
-## @param libname The libary that should be downloaded
+## @param libname The library that should be downloaded
 macro(download_contrib_archive libname)
   # constant
   # Currently this points to an FTP at FU Berlin
@@ -129,7 +129,7 @@ macro(download_contrib_archive libname)
       endif()
     endwhile()
     if (NOT ${_succeeded})
-      message(STATUS "Download and validation failed after ${_attempt} tries. Check your internet connection and try to rebuild ${libname} to trigger a new download of the archive.")
+      message(FATAL_ERROR "Download and validation failed after ${_attempt} tries. Check your internet connection and try to rebuild ${libname} to trigger a new download of the archive.")
       message(STATUS "If this fails again, please contact the OpenMS support.")
     endif()
   else()
