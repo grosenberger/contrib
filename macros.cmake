@@ -32,11 +32,9 @@
 # $Authors: Stephan Aiche, Chris Bielow $
 # --------------------------------------------------------------------------
 
-
-
 macro(determine_compiler_version )
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR  "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
                     OUTPUT_VARIABLE CXX_COMPILER_VERSION)
     string(REGEX MATCHALL "[0-9]+" CXX_COMPILER_COMPONENTS ${CXX_COMPILER_VERSION})
     list(GET CXX_COMPILER_COMPONENTS 0 CXX_COMPILER_VERSION_MAJOR)
@@ -51,7 +49,7 @@ macro(determine_compiler_version )
 endmacro()
 
 ## validates the archive for the given library
-## @param libname The libary that should be validated
+## @param libname The library that should be validated
 macro(validate_archive libname)
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
   set(_target_file "${_archive_folder}/${ARCHIVE_${libname}}")
@@ -71,9 +69,8 @@ macro(validate_archive libname)
     endif()
     message(STATUS "Please try to rebuild ${libname} to trigger a new download of the archive.")
     message(STATUS "If this fails again, please contact the OpenMS support.")
-    message(FATAL_ERROR "Abort!")
   else()
-    message(STATUS "Validating archive for ${libname} .. done")
+    message(STATUS "Validating archive for ${libname} .. successful")
   endif()
 endmacro()
 
@@ -98,17 +95,46 @@ macro(download_contrib_archive libname)
     file(MAKE_DIRECTORY ${_archive_folder})
   endif(NOT EXISTS ${_archive_folder})
 
-  message(STATUS "Downloading ${libname} .. ")
+  if(NOT DEFINED RETRIES)
+    set(_retries 3)
+  elseif(NOT "${RETRIES}" MATCHES "^[1-9][0-9]*")
+    message(FATAL_ERROR "RETRIES argument should be a number greater or equal to 1. Found \"${RETRIES}\"")
+  else()
+    set(_retries ${RETRIES})
+  endif()
+  
+  set(_attempt 0)
+  set(_succeeded 0)
   if(NOT EXISTS ${_target_file})
-    # download
-    file(DOWNLOAD ${_full_url} "${_target_file}")
-    message(STATUS "Downloading ${libname} .. done")
+    while(${_attempt} LESS ${_retries} AND NOT ${_succeeded})
+      math(EXPR _attempt "${_attempt}+1")
+      message(STATUS "Downloading ${libname} .. Try #${_attempt}")
+      # download
+      file(DOWNLOAD ${_full_url} "${_target_file}")
+      message(STATUS "Downloading ${libname} .. done")
+      message(STATUS "Validating archive for ${libname} .. ")
+
+      file(SHA1 ${_target_file} _downloaded_sha1 )
+      if(NOT "${_downloaded_sha1}" STREQUAL "${_target_sha1}")
+        file(REMOVE ${_target_file})
+        if("${_downloaded_sha1}" STREQUAL "da39a3ee5e6b4b0d3255bfef95601890afd80709")
+          message(STATUS "Validating archive for ${libname} .. Found empty archive.")
+        else()
+          message(STATUS "Validating archive for ${libname} .. sha1 mismatch (expected: ${_target_sha1} got: ${_downloaded_sha1})")
+          message(STATUS "The archive file for ${libname} seems to be damaged and will be removed.")
+        endif()
+      else()
+        message(STATUS "Validating archive for ${libname} .. successful")
+        set(_succeeded 1)
+      endif()
+    endwhile()
+    if (NOT ${_succeeded})
+      message(FATAL_ERROR "Download and validation failed after ${_attempt} tries. Check your internet connection and try to rebuild ${libname} to trigger a new download of the archive.")
+      message(STATUS "If this fails again, please contact the OpenMS support.")
+    endif()
   else()
     message(STATUS "Downloading ${libname} .. skipped (already downloaded)")
   endif(NOT EXISTS ${_target_file})
-
-  # validate the archive before using it
-  validate_archive(${libname})
 endmacro()
 
 
