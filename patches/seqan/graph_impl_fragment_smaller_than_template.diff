@@ -4,8 +4,8 @@
          return true;
      if (left.len > right.len)
          return false;
--    if ((left.reversed) < (right.reversed))
-+    if (left.reversed < right.reversed)
+-    if (left.reversed < right.reversed)
++    if ((left.reversed) < (right.reversed))
          return true;
      // if (left.reversed > right.reversed)
      //     return false;
