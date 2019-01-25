@@ -14,6 +14,12 @@ MACRO( OPENMS_CONTRIB_BUILD_SEQAN )
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_SEQAN "SEQAN" "include/seqan/version.h")
 
+  # required for compiler bug in GCC 4-5.X (seems to be fixed with GCC6)
+  # https://github.com/OpenMS/contrib/issues/81
+  set(PATCH_FILE "${PROJECT_SOURCE_DIR}/patches/seqan/graph_impl_fragment_smaller_than_template.diff")
+  set(PATCHED_FILE "${SEQAN_DIR}/core/include/seqan/graph_types/graph_impl_fragment.h")
+  OPENMS_PATCH( PATCH_FILE SEQAN_DIR PATCHED_FILE)
+
   # create seqan build system and install to target directory
   set(_SEQAN_BUILD_DIR "${SEQAN_DIR}/build")
   file(TO_NATIVE_PATH "${_SEQAN_BUILD_DIR}" _SEQAN_NATIVE_BUILD_DIR)
