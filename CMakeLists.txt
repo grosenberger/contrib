@@ -343,10 +343,12 @@ if (MSVC)
     message(FATAL_ERROR "Cannot find '7z.exe' on your system. Please install 7-zip and add the directory to your PATH environment variable!")
   endif()
 
-  ## http://gnuwin32.sourceforge.net/packages/patch.htm
-  find_program(PROGRAM_PATCH "patch.exe" PATHS "C:/Program Files/gnuwin32/bin" "C:/Program Files/patch/bin" "${PROJECT_SOURCE_DIR}/tools")
-  if (NOT PROGRAM_PATCH)
-    message(FATAL_ERROR "Cannot find 'patch.exe' on your system. Please install gnuwin32-patch and add the directory to your PATH environment variable!")
+  ## see contrib/tools/README_patch.txt. We do not want any other patch.exe (since ours does not require elevation, i.e. admin rights)
+  find_program(PROGRAM_PATCH "patch.exe" PATHS "${PROJECT_SOURCE_DIR}/tools" NO_DEFAULT_PATH)
+  if (PROGRAM_PATCH)
+    message(STATUS "Found patch.exe at '${PROGRAM_PATCH}'")
+  else()	
+    message(FATAL_ERROR "Cannot find 'patch.exe' in '${PROJECT_SOURCE_DIR}/tools' on your system. Please make sure its available!")
   endif()
 
   find_program(MSBUILD_EXECUTABLE MSBuild PATHS "C:/Program Files (x86)/MSBuild/${CONTRIB_MSVC_VERSION}.0/Bin/")
