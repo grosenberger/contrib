@@ -39,6 +39,9 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
                         -G "${CMAKE_GENERATOR}"
                         -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                        -D BUILD_TESTING=Off
+                        -D HDF5_BUILD_EXAMPLES=Off
+                        -D HDF5_BUILD_TOOLS=Off
                         ${_HDF5_CMAKE_ARGS}
                         ${HDF5_DIR}
                         WORKING_DIRECTORY ${_HDF5_NATIVE_BUILD_DIR}
