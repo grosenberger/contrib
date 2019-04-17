@@ -2,6 +2,10 @@
 ###       HDF5                                 ###
 ##################################################
 MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
+
+  # Minimal cmake requirement for building HDF5 1.10.5
+  cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
+
   OPENMS_LOGHEADER_LIBRARY("HDF5")
   #extract: (takes very long.. so skip if possible)
   if(MSVC)
