@@ -14,7 +14,7 @@ WORKDIR /code
 RUN git clone https://github.com/percolator/percolator.git
 RUN mkdir percolator_build
 
-WORKDIR /percolator_build
+WORKDIR /code/percolator_build
 
 RUN cmake -DCMAKE_PREFIX_PATH="/usr/;/usr/local" ../percolator
 RUN make && make install
